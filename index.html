@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RPG Real Life</title>
+  <style>
+    :root {
+      --bg: #050b12;
+      --bg-2: #0a1520;
+      --panel: rgba(10, 21, 32, 0.88);
+      --panel-2: rgba(14, 28, 41, 0.94);
+      --line: rgba(116, 197, 255, 0.16);
+      --line-strong: rgba(116, 197, 255, 0.36);
+      --text: #eef7ff;
+      --muted: #8ea8bf;
+      --accent: #74c5ff;
+      --accent-2: #45f0c7;
+      --accent-3: #ffc857;
+      --danger: #ff7f96;
+      --shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+      --radius: 20px;
+      --hero-title-main: #eef7ff;
+      --hero-title-accent: #74c5ff;
+      --hero-title-shadow: rgba(116, 197, 255, 0.24);
+      --hero-panel: linear-gradient(135deg, rgba(10, 21, 32, 0.96), rgba(6, 14, 22, 0.92));
+      --body-bg:
+        radial-gradient(circle at top left, rgba(69, 240, 199, 0.12), transparent 26%),
+        radial-gradient(circle at top right, rgba(116, 197, 255, 0.14), transparent 30%),
+        linear-gradient(180deg, #09131c 0%, #050b12 100%);
+      --body-grid: linear-gradient(rgba(116, 197, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(116, 197, 255, 0.04) 1px, transparent 1px);
+    }
+
+    body[data-theme="classic"] {
+      --bg: #1d140d;
+      --bg-2: #2c1c10;
+      --panel: rgba(41, 27, 16, 0.9);
+      --panel-2: rgba(56, 36, 21, 0.95);
+      --line: rgba(255, 205, 122, 0.22);
+      --line-strong: rgba(255, 205, 122, 0.45);
+      --text: #fff3dc;
+      --muted: #d4bc93;
+      --accent: #f2b84b;
+      --accent-2: #d9752f;
+      --accent-3: #f6dd8f;
+      --danger: #d85f4a;
+      --shadow: 0 18px 48px rgba(32, 17, 7, 0.4);
+      --hero-title-main: #fff2c5;
+      --hero-title-accent: #f2b84b;
+      --hero-title-shadow: rgba(242, 184, 75, 0.3);
+      --hero-panel: linear-gradient(135deg, rgba(58, 37, 19, 0.96), rgba(28, 18, 10, 0.93));
+      --body-bg:
+        radial-gradient(circle at top left, rgba(242, 184, 75, 0.18), transparent 26%),
+        radial-gradient(circle at top right, rgba(217, 117, 47, 0.14), transparent 32%),
+        linear-gradient(180deg, #2c1b10 0%, #140d08 100%);
+      --body-grid: linear-gradient(rgba(255, 220, 143, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 220, 143, 0.045) 1px, transparent 1px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background: var(--body-bg);
+      overflow-x: hidden;
+      transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: var(--body-grid);
+      background-size: 30px 30px;
+      mask-image: linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 88%);
+      opacity: 0.55;
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 28px;
+      margin-bottom: 22px;
+      padding: 30px;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: var(--hero-panel);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -12%;
+      top: -24%;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(116, 197, 255, 0.11), transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-copy {
+      max-width: 700px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      text-transform: uppercase;
+      line-height: 0.9;
+    }
+
+    .hero-title {
+      display: inline-grid;
+      gap: 4px;
+      letter-spacing: 0.02em;
+      text-shadow: 0 10px 30px var(--hero-title-shadow);
+    }
+
+    .hero-title-main,
+    .hero-title-sub {
+      display: block;
+      font-weight: 900;
+    }
+
+    .hero-title-main {
+      color: var(--hero-title-main);
+    }
+
+    .hero-title-sub {
+      color: var(--hero-title-accent);
+    }
+
+    .hero p {
+      margin: 16px 0 0;
+      max-width: 610px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+
+    .hero-topline {
+      display: flex;
+      justify-content: flex-start;
+      align-items: start;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--accent);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    .theme-switcher {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+      padding: 6px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+    }
+
+    .theme-button {
+      min-width: 0;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid transparent;
+      box-shadow: none;
+      padding: 10px 14px;
+    }
+
+    .theme-button.active {
+      color: #081019;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color: transparent;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+      gap: 22px;
+    }
+
+    .column {
+      display: grid;
+      gap: 22px;
+      align-content: start;
+    }
+
+    .card {
+      position: relative;
+      padding: 22px 22px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(116, 197, 255, 0.16), rgba(69, 240, 199, 0.03));
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-header h2,
+    .section-header h3 {
+      margin: 0;
+      font-size: 0.96rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .section-header span {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .character-panel {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .character-portrait {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(116, 197, 255, 0.14);
+      background: linear-gradient(180deg, rgba(18, 34, 48, 0.9), rgba(8, 16, 25, 0.94));
+      min-height: 100%;
+    }
+
+    .character-frame {
+      aspect-ratio: 0.76 / 1.5;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(116, 197, 255, 0.1), rgba(69, 240, 199, 0.05));
+      border: 1px solid rgba(116, 197, 255, 0.18);
+      margin-bottom: 14px;
+    }
+
+    .character-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center top;
+      display: block;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    body[data-theme="classic"] .card,
+    body[data-theme="classic"] .character-portrait,
+    body[data-theme="classic"] .stat-box,
+    body[data-theme="classic"] .status-box,
+    body[data-theme="classic"] .attribute-box,
+    body[data-theme="classic"] .mission-item,
+    body[data-theme="classic"] .skill-card,
+    body[data-theme="classic"] .title-item {
+      box-shadow: inset 0 0 0 1px rgba(255, 226, 168, 0.05);
+    }
+
+    body[data-theme="classic"] .card::before {
+      background: linear-gradient(135deg, rgba(255, 205, 122, 0.28), rgba(217, 117, 47, 0.08));
+    }
+
+    body[data-theme="classic"] .progress-fill,
+    body[data-theme="classic"] button,
+    body[data-theme="classic"] .theme-button.active {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 18px rgba(242, 184, 75, 0.2);
+    }
+
+    .stats-row,
+    .attribute-grid,
+    .mission-list,
+    .skills-grid,
+    .title-list,
+    .status-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stats-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 16px;
+    }
+
+    .status-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stat-box,
+    .status-box,
+    .attribute-box,
+    .mission-item,
+    .skill-card,
+    .title-item {
+      padding: 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(116, 197, 255, 0.14);
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .stat-label,
+    .status-label,
+    .attribute-label,
+    .skill-meta,
+    .mission-meta,
+    .title-meta {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .stat-value,
+    .status-value,
+    .attribute-value,
+    .skill-level,
+    .mission-name,
+    .title-name {
+      margin-top: 8px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      font-size: 1.35rem;
+    }
+
+    .status-value {
+      font-size: 1rem;
+    }
+
+    .progress-shell {
+      margin-top: 12px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(116, 197, 255, 0.12);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 18px rgba(69, 240, 199, 0.24);
+      transition: width 0.4s ease;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field-grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    input,
+    select,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 12px;
+      border: 1px solid rgba(116, 197, 255, 0.18);
+      background: rgba(4, 12, 19, 0.85);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 3px rgba(116, 197, 255, 0.12);
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 11px 15px;
+      color: #031018;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transition: transform 0.18s ease, filter 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    button.secondary {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(116, 197, 255, 0.18);
+    }
+
+    .mission-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .mission-name {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .mission-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+    }
+
+    .tag.easy { color: #8ef5cf; }
+    .tag.medium { color: #ffd166; }
+    .tag.hard { color: #ff8a8a; }
+
+    .skills-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .skill-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .skill-name {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .rank-pill,
+    .lock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(116, 197, 255, 0.18);
+      background: rgba(116, 197, 255, 0.1);
+      color: var(--accent);
+    }
+
+    .attribute-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .attribute-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+      margin-bottom: 12px;
+    }
+
+    .attribute-summary-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(116, 197, 255, 0.14);
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .attribute-box {
+      display: grid;
+      gap: 12px;
+    }
+
+    .attribute-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .attribute-points {
+      text-align: right;
+    }
+
+    .attribute-points strong {
+      display: block;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .attribute-tier {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      border: 1px solid rgba(116, 197, 255, 0.16);
+      background: rgba(116, 197, 255, 0.08);
+      color: var(--accent);
+    }
+
+    body[data-theme="classic"] .attribute-tier {
+      border-color: rgba(255, 205, 122, 0.22);
+      background: rgba(255, 205, 122, 0.08);
+    }
+
+    .attribute-bar {
+      width: 100%;
+    }
+
+    .attribute-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .title-list {
+      grid-template-columns: 1fr;
+    }
+
+    .title-item.locked {
+      opacity: 0.58;
+      border-style: dashed;
+    }
+
+    .title-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .lock-pill.locked {
+      color: #a9b7c5;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .empty-state {
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px dashed rgba(116, 197, 255, 0.2);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .notification-stack {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: min(360px, calc(100vw - 32px));
+      display: grid;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    .toast {
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(116, 197, 255, 0.18);
+      background: rgba(7, 16, 24, 0.96);
+      box-shadow: var(--shadow);
+      animation: slide-in 0.25s ease;
+    }
+
+    .toast strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--accent-2);
+    }
+
+    @keyframes slide-in {
+      from {
+        transform: translateY(-10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .page-grid,
+      .character-panel,
+      .field-grid,
+      .field-grid.two,
+      .stats-row,
+      .skills-grid,
+      .attribute-grid,
+      .attribute-summary,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mission-item {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 24px 22px;
+      }
+
+      .theme-switcher {
+        justify-content: flex-start;
+      }
+
+      #heroStatus {
+        justify-self: start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app-shell {
+        width: min(100% - 18px, 100%);
+        padding: 14px 0 24px;
+      }
+
+      .hero {
+        gap: 16px;
+        margin-bottom: 16px;
+        align-items: start;
+        padding: 20px 16px;
+        border-radius: 24px;
+      }
+
+      .hero-topline {
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.2rem, 12vw, 3rem);
+      }
+
+      .hero p {
+        font-size: 0.95rem;
+        line-height: 1.55;
+      }
+
+      #heroStatus {
+        width: auto;
+        max-width: 100%;
+        justify-self: start;
+      }
+
+      .card {
+        padding: 16px 14px;
+        border-radius: 18px;
+      }
+
+      .character-panel {
+        gap: 14px;
+      }
+
+      .character-portrait {
+        padding: 10px;
+      }
+
+      .character-frame {
+        aspect-ratio: 0.84 / 1.45;
+      }
+
+      .section-header {
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .section-header span {
+        font-size: 0.8rem;
+      }
+
+      .field-grid,
+      .field-grid.two {
+        gap: 9px;
+      }
+
+      .theme-switcher {
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+
+      .theme-button {
+        width: 100%;
+      }
+
+      .stats-row,
+      .status-grid,
+      .attribute-summary,
+      .attribute-grid,
+      .skills-grid {
+        gap: 10px;
+      }
+
+      .mission-tags {
+        gap: 6px;
+      }
+
+      .notification-stack {
+        top: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+      }
+    }
+  </style>
+</head>
+<body data-theme="modern">
+  <div class="notification-stack" id="notificationStack"></div>
+
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="hero-topline">
+          <div class="hero-badge" id="themeBadge">Tema moderno</div>
+          <div class="theme-switcher">
+            <button type="button" class="theme-button" id="classicThemeButton">Modo Classico</button>
+            <button type="button" class="theme-button active" id="modernThemeButton">Modo Moderno</button>
+          </div>
+        </div>
+        <h1 class="hero-title">
+          <span class="hero-title-main">RPG REAL</span>
+          <span class="hero-title-sub">LIFE</span>
+        </h1>
+        <p>Organize sua vida como um RPG: monte missoes, evolua habilidades, fortalezca atributos e acompanhe o progresso do seu personagem em tempo real.</p>
+      </div>
+      <div class="hero-badge" id="heroStatus">Carregando perfil...</div>
+    </section>
+
+    <section class="page-grid">
+      <div class="column">
+        <article class="card">
+          <div class="section-header">
+            <h2>Personagem</h2>
+            <span id="overallRank">Status inicial</span>
+          </div>
+
+          <div class="character-panel">
+            <div class="character-portrait">
+              <div class="character-frame">
+                <img id="characterImage" alt="Personagem do RPG Real Life">
+              </div>
+              <button type="button" id="toggleOutfitButton">Trocar Roupa</button>
+              <p class="small-note" id="outfitLabel" style="margin: 12px 0 0;">Look ativo: look1.png</p>
+            </div>
+
+            <div>
+              <div class="stats-row">
+                <div class="stat-box">
+                  <div class="stat-label">Level geral</div>
+                  <div class="stat-value" id="playerLevel">1</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">XP atual</div>
+                  <div class="stat-value" id="playerXp">0</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-label">Missoes concluidas</div>
+                  <div class="stat-value" id="completedMissions">0</div>
+                </div>
+              </div>
+
+              <div class="progress-shell">
+                <div class="progress-label">
+                  <span>Progresso do level</span>
+                  <span id="playerXpLabel">0 / 100 XP</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="playerXpBar"></div>
+                </div>
+              </div>
+
+              <div class="section-header" style="margin-top: 22px;">
+                <h3>Status</h3>
+                <span>Visao geral do seu progresso</span>
+              </div>
+              <div class="status-grid" id="statusGrid"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="section-header">
+            <h2>Missoes</h2>
+            <span>Crie e conclua atividades para subir de nivel</span>
+          </div>
+
+          <form id="missionForm">
+            <label>
+              Nome da missao
+              <input type="text" id="missionName" maxlength="90" placeholder="Ex.: Estudar composicao por 30 min" required>
+            </label>
+
+            <div class="field-grid">
+              <label>
+                Dificuldade
+                <select id="missionDifficulty" required>
+                  <option value="Facil">Facil</option>
+                  <option value="Media">Media</option>
+                  <option value="Dificil">Dificil</option>
+                </select>
+              </label>
+
+              <label>
+                Habilidade
+                <select id="missionSkill" required></select>
+              </label>
+
+              <label>
+                Acao
+                <button type="submit">Adicionar Missao</button>
+              </label>
+            </div>
+          </form>
+
+          <div class="mission-list" id="missionList" style="margin-top: 18px;"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-header">
+            <h2>Atributos</h2>
+            <span>Pontuacao, faixa e evolucao do personagem</span>
+          </div>
+
+          <form id="attributeForm">
+            <div class="field-grid two">
+              <label>
+                Nome do atributo
+                <input type="text" id="attributeName" maxlength="40" placeholder="Ex.: Criatividade">
+              </label>
+
+              <label>
+                Valor inicial
+                <input type="number" id="attributeValue" min="0" step="1" value="10">
+              </label>
+            </div>
+            <button type="submit">Adicionar Atributo</button>
+          </form>
+
+          <div class="attribute-summary" id="attributeSummary"></div>
+          <div class="attribute-grid" id="attributeGrid"></div>
+        </article>
+      </div>
+
+      <div class="column">
+        <article class="card">
+          <div class="section-header">
+            <h2>Habilidades</h2>
+            <span>Evolucao individual por especialidade</span>
+          </div>
+
+          <form id="skillForm">
+            <label>
+              Nova habilidade
+              <input type="text" id="skillName" maxlength="50" placeholder="Ex.: Fisico, Escrita, Programacao">
+            </label>
+            <button type="submit">Adicionar Habilidade</button>
+          </form>
+
+          <div class="skills-grid" id="skillsGrid" style="margin-top: 18px;"></div>
+        </article>
+
+        <article class="card">
+          <div class="section-header">
+            <h2>Titulos</h2>
+            <span>Desbloqueados e bloqueados lado a lado</span>
+          </div>
+          <div class="title-list" id="titleList"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "rpg-real-life-save";
+
+    const defaultSkillNames = [
+      "Motion Design",
+      "Desenho",
+      "Violao",
+      "Marketing",
+      "Comunicacao"
+    ];
+
+    const outfitCatalog = [
+      {
+        key: "look1",
+        label: "charcter-pose-1.jpg",
+        src: "charcter-pose-1.jpg"
+      },
+      {
+        key: "look2",
+        label: "charcter-pose-2.jpg",
+        src: "charcter-pose-2.jpg"
+      }
+    ];
+
+    const titleRules = [
+      {
+        id: "determinado",
+        name: "Iniciante Determinado",
+        description: "Alcance o level 3 geral.",
+        unlocked: (state) => state.player.level >= 3
+      },
+      {
+        id: "evolucao-constante",
+        name: "Evolucao Constante",
+        description: "Alcance o level 5 geral.",
+        unlocked: (state) => state.player.level >= 5
+      },
+      {
+        id: "disciplina",
+        name: "Discipulo da Disciplina",
+        description: "Chegue a 20 pontos de Disciplina.",
+        unlocked: (state) => getAttributeValue(state, "disciplina") >= 20
+      },
+      {
+        id: "especialista",
+        name: "Especialista em Evolucao",
+        description: "Leve qualquer habilidade ao level 3.",
+        unlocked: (state) => state.skills.some((skill) => skill.level >= 3)
+      },
+      {
+        id: "executor",
+        name: "Executor Consistente",
+        description: "Complete 10 missoes.",
+        unlocked: (state) => state.player.completedMissions >= 10
+      }
+    ];
+
+    const difficultyRewards = {
+      Facil: {
+        generalXp: 25,
+        skillXp: 18,
+        focusBonus: 2,
+        fallbackBonus: 1
+      },
+      Media: {
+        generalXp: 45,
+        skillXp: 32,
+        focusBonus: 3,
+        fallbackBonus: 1
+      },
+      Dificil: {
+        generalXp: 70,
+        skillXp: 50,
+        focusBonus: 5,
+        fallbackBonus: 2
+      }
+    };
+
+    const initialState = {
+      player: {
+        level: 1,
+        xp: 0,
+        completedMissions: 0,
+        currentOutfitIndex: 0,
+        theme: "modern",
+        attributes: {
+          energia: 10,
+          disciplina: 10,
+          carisma: 10
+        }
+      },
+      skills: defaultSkillNames.map((name) => ({
+        id: createId(),
+        name,
+        level: 1,
+        xp: 0
+      })),
+      missions: [
+        {
+          id: createId(),
+          name: "Planejar a semana",
+          difficulty: "Facil",
+          skill: "Comunicacao"
+        },
+        {
+          id: createId(),
+          name: "Praticar violao por 20 minutos",
+          difficulty: "Media",
+          skill: "Violao"
+        }
+      ],
+      unlockedTitles: []
+    };
+
+    let state = loadState();
+
+    const elements = {
+      heroStatus: document.getElementById("heroStatus"),
+      themeBadge: document.getElementById("themeBadge"),
+      overallRank: document.getElementById("overallRank"),
+      playerLevel: document.getElementById("playerLevel"),
+      playerXp: document.getElementById("playerXp"),
+      completedMissions: document.getElementById("completedMissions"),
+      playerXpLabel: document.getElementById("playerXpLabel"),
+      playerXpBar: document.getElementById("playerXpBar"),
+      statusGrid: document.getElementById("statusGrid"),
+      attributeSummary: document.getElementById("attributeSummary"),
+      attributeGrid: document.getElementById("attributeGrid"),
+      missionForm: document.getElementById("missionForm"),
+      missionName: document.getElementById("missionName"),
+      missionDifficulty: document.getElementById("missionDifficulty"),
+      missionSkill: document.getElementById("missionSkill"),
+      missionList: document.getElementById("missionList"),
+      skillForm: document.getElementById("skillForm"),
+      skillName: document.getElementById("skillName"),
+      skillsGrid: document.getElementById("skillsGrid"),
+      attributeForm: document.getElementById("attributeForm"),
+      attributeName: document.getElementById("attributeName"),
+      attributeValue: document.getElementById("attributeValue"),
+      titleList: document.getElementById("titleList"),
+      notificationStack: document.getElementById("notificationStack"),
+      characterImage: document.getElementById("characterImage"),
+      toggleOutfitButton: document.getElementById("toggleOutfitButton"),
+      outfitLabel: document.getElementById("outfitLabel"),
+      classicThemeButton: document.getElementById("classicThemeButton"),
+      modernThemeButton: document.getElementById("modernThemeButton")
+    };
+
+    setup();
+
+    function setup() {
+      syncDerivedState();
+      populateSkillSelect();
+      bindEvents();
+      render();
+    }
+
+    function bindEvents() {
+      elements.missionForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        addMission();
+      });
+
+      elements.skillForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        addSkill();
+      });
+
+      elements.attributeForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        addAttribute();
+      });
+
+      elements.toggleOutfitButton.addEventListener("click", toggleOutfit);
+      elements.classicThemeButton.addEventListener("click", function() {
+        setTheme("classic");
+      });
+      elements.modernThemeButton.addEventListener("click", function() {
+        setTheme("modern");
+      });
+    }
+
+    function createId() {
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function createCharacterLook(colors) {
+      const svg =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 420">' +
+        '<defs>' +
+        '<linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">' +
+        '<stop offset="0%" stop-color="#0e2232"/>' +
+        '<stop offset="100%" stop-color="#06111b"/>' +
+        '</linearGradient>' +
+        '</defs>' +
+        '<rect width="360" height="420" fill="url(#bg)"/>' +
+        '<circle cx="180" cy="120" r="72" fill="' + colors.hood + '" opacity="0.18"/>' +
+        '<path d="M112 116c0-44 30-74 68-74s68 30 68 74v56c0 48-32 80-68 80s-68-32-68-80z" fill="#f2d1be"/>' +
+        '<path d="M110 120c8-52 38-86 70-86 44 0 78 36 78 86v12c-18-26-40-38-78-38-28 0-48 10-70 26z" fill="' + colors.hood + '"/>' +
+        '<rect x="100" y="248" width="160" height="122" rx="48" fill="' + colors.jacket + '"/>' +
+        '<path d="M134 236h92l24 38-28 96H138l-28-96z" fill="' + colors.accent + '" opacity="0.34"/>' +
+        '<rect x="136" y="104" width="88" height="18" rx="9" fill="' + colors.visor + '" opacity="0.85"/>' +
+        '<circle cx="154" cy="164" r="8" fill="#253949"/>' +
+        '<circle cx="206" cy="164" r="8" fill="#253949"/>' +
+        '<path d="M150 210c16 12 44 12 60 0" stroke="#8a5a4f" stroke-width="8" stroke-linecap="round" fill="none"/>' +
+        '<rect x="150" y="266" width="60" height="82" rx="22" fill="rgba(255,255,255,0.24)"/>' +
+        '<circle cx="292" cy="66" r="14" fill="' + colors.jacket + '" opacity="0.66"/>' +
+        '<circle cx="70" cy="334" r="18" fill="' + colors.hood + '" opacity="0.2"/>' +
+        '</svg>';
+
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
+    function cloneInitialState() {
+      return JSON.parse(JSON.stringify(initialState));
+    }
+
+    function normalizeKey(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function toLabel(key) {
+      const text = String(key || "").replace(/[-_]/g, " ").trim();
+      return text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
+    }
+
+    function getPlayerMaxXp(level) {
+      return level * 100;
+    }
+
+    function getSkillMaxXp(level) {
+      return level * 50;
+    }
+
+    function getRankByLevel(level) {
+      const ranks = {
+        1: "Bronze",
+        2: "Prata",
+        3: "Ouro",
+        4: "Platina",
+        5: "Diamante",
+        6: "Mestre",
+        7: "Lendario"
+      };
+
+      return ranks[Math.min(level, 7)] || "Lendario";
+    }
+
+    function getDifficultyLabel(value) {
+      const labels = {
+        Facil: "Facil",
+        Media: "Media",
+        Dificil: "Dificil"
+      };
+
+      return labels[value] || value;
+    }
+
+    function getAttributeValue(currentState, key) {
+      return Number(currentState.player.attributes[key] || 0);
+    }
+
+    function getTopSkill() {
+      return state.skills.slice().sort(function(a, b) {
+        return (b.level - a.level) || (b.xp - a.xp) || a.name.localeCompare(b.name);
+      })[0];
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          return cloneInitialState();
+        }
+
+        return mergeWithInitialState(JSON.parse(raw));
+      } catch (error) {
+        console.error("Falha ao carregar dados:", error);
+        return cloneInitialState();
+      }
+    }
+
+    function mergeWithInitialState(savedState) {
+      const base = cloneInitialState();
+      const mergedAttributes = Object.assign({}, base.player.attributes);
+      const savedAttributes = savedState.player && savedState.player.attributes ? savedState.player.attributes : {};
+
+      Object.keys(savedAttributes).forEach(function(key) {
+        mergedAttributes[normalizeKey(key)] = Number(savedAttributes[key]) || 0;
+      });
+
+      let mergedSkills = Array.isArray(savedState.skills) ? savedState.skills.map(function(skill) {
+        return {
+          id: skill.id || createId(),
+          name: String(skill.name || "Nova habilidade").trim(),
+          level: Math.max(1, Number(skill.level) || 1),
+          xp: Math.max(0, Number(skill.xp) || 0)
+        };
+      }) : base.skills;
+
+      defaultSkillNames.forEach(function(name) {
+        if (!mergedSkills.some(function(skill) { return normalizeKey(skill.name) === normalizeKey(name); })) {
+          mergedSkills.push({ id: createId(), name: name, level: 1, xp: 0 });
+        }
+      });
+
+      return {
+        player: {
+          level: Math.max(1, Number(savedState.player && savedState.player.level) || 1),
+          xp: Math.max(0, Number(savedState.player && savedState.player.xp) || 0),
+          completedMissions: Math.max(0, Number(savedState.player && savedState.player.completedMissions) || 0),
+          currentOutfitIndex: Math.min(outfitCatalog.length - 1, Math.max(0, Number(savedState.player && savedState.player.currentOutfitIndex) || 0)),
+          theme: savedState.player && savedState.player.theme === "classic" ? "classic" : "modern",
+          attributes: mergedAttributes
+        },
+        skills: mergedSkills,
+        missions: Array.isArray(savedState.missions) ? savedState.missions.map(function(mission) {
+          return {
+            id: mission.id || createId(),
+            name: String(mission.name || "Missao sem nome").trim(),
+            difficulty: difficultyRewards[mission.difficulty] ? mission.difficulty : "Facil",
+            skill: String(mission.skill || mergedSkills[0].name)
+          };
+        }) : base.missions,
+        unlockedTitles: Array.isArray(savedState.unlockedTitles) ? savedState.unlockedTitles.slice() : []
+      };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function syncDerivedState() {
+      updateTitles();
+      saveState();
+    }
+
+    function populateSkillSelect() {
+      const currentValue = elements.missionSkill.value;
+      elements.missionSkill.innerHTML = state.skills.map(function(skill) {
+        return '<option value="' + escapeHtml(skill.name) + '">' + escapeHtml(skill.name) + '</option>';
+      }).join("");
+
+      if (state.skills.some(function(skill) { return skill.name === currentValue; })) {
+        elements.missionSkill.value = currentValue;
+      }
+    }
+
+    function addMission() {
+      const name = elements.missionName.value.trim();
+      const difficulty = elements.missionDifficulty.value;
+      const skill = elements.missionSkill.value;
+
+      if (!name) {
+        notify("Missao vazia", "Digite um nome para a missao.");
+        return;
+      }
+
+      state.missions.unshift({
+        id: createId(),
+        name: name,
+        difficulty: difficulty,
+        skill: skill
+      });
+
+      elements.missionForm.reset();
+      elements.missionDifficulty.value = "Facil";
+      populateSkillSelect();
+      saveAndRender();
+      notify("Missao criada", '"' + name + '" entrou na sua lista de objetivos.');
+    }
+
+    function addSkill() {
+      const name = elements.skillName.value.trim();
+      if (!name) {
+        notify("Habilidade vazia", "Digite o nome da habilidade.");
+        return;
+      }
+
+      const exists = state.skills.some(function(skill) {
+        return normalizeKey(skill.name) === normalizeKey(name);
+      });
+
+      if (exists) {
+        notify("Ja existe", "Essa habilidade ja esta no seu painel.");
+        return;
+      }
+
+      state.skills.push({
+        id: createId(),
+        name: name,
+        level: 1,
+        xp: 0
+      });
+
+      elements.skillForm.reset();
+      populateSkillSelect();
+      saveAndRender();
+      notify("Nova habilidade", name + " foi adicionada ao sistema.");
+    }
+
+    function addAttribute() {
+      const label = elements.attributeName.value.trim();
+      const rawValue = Number(elements.attributeValue.value);
+      const value = Number.isFinite(rawValue) ? Math.max(0, Math.floor(rawValue)) : 10;
+      const key = normalizeKey(label);
+
+      if (!label || !key) {
+        notify("Atributo vazio", "Digite o nome do atributo.");
+        return;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(state.player.attributes, key)) {
+        notify("Ja existe", "Esse atributo ja faz parte do personagem.");
+        return;
+      }
+
+      state.player.attributes[key] = value;
+
+      elements.attributeForm.reset();
+      elements.attributeValue.value = "10";
+      saveAndRender();
+      notify("Novo atributo", toLabel(key) + " foi adicionado com valor " + value + ".");
+    }
+
+    function toggleOutfit() {
+      state.player.currentOutfitIndex = (state.player.currentOutfitIndex + 1) % outfitCatalog.length;
+      saveAndRender();
+      notify("Roupa atualizada", "Seu personagem alternou para " + outfitCatalog[state.player.currentOutfitIndex].label + ".");
+    }
+
+    function completeMission(missionId) {
+      const missionIndex = state.missions.findIndex(function(mission) {
+        return mission.id === missionId;
+      });
+
+      if (missionIndex === -1) {
+        return;
+      }
+
+      const mission = state.missions[missionIndex];
+      const rewards = difficultyRewards[mission.difficulty];
+      const skill = state.skills.find(function(entry) {
+        return entry.name === mission.skill;
+      });
+
+      state.missions.splice(missionIndex, 1);
+      state.player.completedMissions += 1;
+
+      const playerLevelUps = awardPlayerXp(rewards.generalXp);
+      const skillLevelUps = awardSkillXp(skill, rewards.skillXp);
+      applyAttributeRewards(rewards, skill);
+      const unlockedTitles = updateTitles();
+
+      saveAndRender();
+
+      notify(
+        "Missao concluida",
+        mission.name + ": +" + rewards.generalXp + " XP geral, +" + rewards.skillXp + " XP em " + mission.skill + "."
+      );
+
+      if (playerLevelUps > 0) {
+        notify("Level up geral", "Voce subiu " + playerLevelUps + " level(s) e agora esta no level " + state.player.level + ".");
+      }
+
+      if (skill && skillLevelUps > 0) {
+        notify("Habilidade evoluiu", mission.skill + " subiu para o level " + skill.level + ".");
+      }
+
+      unlockedTitles.forEach(function(title) {
+        notify("Novo titulo", title.name + " desbloqueado.");
+      });
+    }
+
+    function applyAttributeRewards(rewards, skill) {
+      const keys = Object.keys(state.player.attributes);
+
+      keys.forEach(function(key) {
+        if (key === "disciplina") {
+          state.player.attributes[key] += rewards.focusBonus;
+        } else if (key === "energia") {
+          state.player.attributes[key] += 1;
+        } else if (key === "carisma") {
+          state.player.attributes[key] += rewards.fallbackBonus;
+        } else if (skill && normalizeKey(skill.name).includes(key)) {
+          state.player.attributes[key] += rewards.focusBonus;
+        } else {
+          state.player.attributes[key] += rewards.fallbackBonus;
+        }
+      });
+    }
+
+    function awardPlayerXp(amount) {
+      let levelUps = 0;
+      state.player.xp += amount;
+
+      while (state.player.xp >= getPlayerMaxXp(state.player.level)) {
+        state.player.xp -= getPlayerMaxXp(state.player.level);
+        state.player.level += 1;
+        levelUps += 1;
+      }
+
+      return levelUps;
+    }
+
+    function awardSkillXp(skill, amount) {
+      if (!skill) {
+        return 0;
+      }
+
+      let levelUps = 0;
+      skill.xp += amount;
+
+      while (skill.xp >= getSkillMaxXp(skill.level)) {
+        skill.xp -= getSkillMaxXp(skill.level);
+        skill.level += 1;
+        levelUps += 1;
+      }
+
+      return levelUps;
+    }
+
+    function updateTitles() {
+      const unlockedNow = [];
+
+      titleRules.forEach(function(rule) {
+        const alreadyUnlocked = state.unlockedTitles.includes(rule.id);
+        if (!alreadyUnlocked && rule.unlocked(state)) {
+          state.unlockedTitles.push(rule.id);
+          unlockedNow.push(rule);
+        }
+      });
+
+      return unlockedNow;
+    }
+
+    function saveAndRender() {
+      saveState();
+      render();
+    }
+
+    function setTheme(theme) {
+      state.player.theme = theme === "classic" ? "classic" : "modern";
+      saveAndRender();
+      notify("Tema alterado", state.player.theme === "classic" ? "Visual classico ativado." : "Visual moderno ativado.");
+    }
+
+    function applyTheme() {
+      const activeTheme = state.player.theme === "classic" ? "classic" : "modern";
+      document.body.setAttribute("data-theme", activeTheme);
+      elements.themeBadge.textContent = activeTheme === "classic" ? "Tema classico" : "Tema moderno";
+      elements.classicThemeButton.classList.toggle("active", activeTheme === "classic");
+      elements.modernThemeButton.classList.toggle("active", activeTheme === "modern");
+    }
+
+    function render() {
+      applyTheme();
+      populateSkillSelect();
+      renderPlayer();
+      renderStatus();
+      renderAttributes();
+      renderMissions();
+      renderSkills();
+      renderTitles();
+    }
+
+    function renderPlayer() {
+      const playerMaxXp = getPlayerMaxXp(state.player.level);
+      const progress = (state.player.xp / playerMaxXp) * 100;
+      const topSkill = getTopSkill();
+      const outfit = outfitCatalog[state.player.currentOutfitIndex];
+
+      elements.playerLevel.textContent = String(state.player.level);
+      elements.playerXp.textContent = String(state.player.xp);
+      elements.completedMissions.textContent = String(state.player.completedMissions);
+      elements.playerXpLabel.textContent = state.player.xp + " / " + playerMaxXp + " XP";
+      elements.playerXpBar.style.width = Math.min(progress, 100) + "%";
+      elements.heroStatus.textContent = "Level " + state.player.level + " | " + state.player.completedMissions + " missoes concluidas";
+      elements.overallRank.textContent = "Habilidade em destaque: " + topSkill.name + " (" + getRankByLevel(topSkill.level) + ")";
+      elements.characterImage.src = outfit.src;
+      elements.outfitLabel.textContent = "Look ativo: " + outfit.label;
+    }
+
+    function renderStatus() {
+      const topSkill = getTopSkill();
+      const totalSkills = state.skills.length;
+      const unlockedCount = state.unlockedTitles.length;
+      const nextTitle = titleRules.find(function(rule) {
+        return !state.unlockedTitles.includes(rule.id);
+      });
+
+      elements.statusGrid.innerHTML = [
+        createStatusBox("Rank principal", getRankByLevel(topSkill.level)),
+        createStatusBox("Melhor habilidade", topSkill.name),
+        createStatusBox("Total de habilidades", String(totalSkills)),
+        createStatusBox("Titulos liberados", unlockedCount + " / " + titleRules.length),
+        createStatusBox("Roupas disponiveis", String(outfitCatalog.length)),
+        createStatusBox("Proximo titulo", nextTitle ? nextTitle.name : "Todos liberados")
+      ].join("");
+    }
+
+    function createStatusBox(label, value) {
+      return '<div class="status-box"><div class="status-label">' + escapeHtml(label) + '</div><div class="status-value">' + escapeHtml(value) + "</div></div>";
+    }
+
+    function createAttributeSummaryCard(label, value) {
+      return '<div class="attribute-summary-card"><div class="status-label">' + escapeHtml(label) + '</div><div class="status-value">' + escapeHtml(value) + "</div></div>";
+    }
+
+    function getAttributeTier(value) {
+      if (value >= 40) {
+        return "Lendario";
+      }
+      if (value >= 30) {
+        return "Elite";
+      }
+      if (value >= 20) {
+        return "Avancado";
+      }
+      if (value >= 12) {
+        return "Estavel";
+      }
+      return "Inicial";
+    }
+
+    function getAttributeNextMilestone(value) {
+      const milestones = [12, 20, 30, 40];
+      for (let index = 0; index < milestones.length; index += 1) {
+        if (value < milestones[index]) {
+          return milestones[index];
+        }
+      }
+      return null;
+    }
+
+    function getAttributePowerRank(average) {
+      if (average >= 40) {
+        return "Build lendaria";
+      }
+      if (average >= 30) {
+        return "Build de elite";
+      }
+      if (average >= 20) {
+        return "Build avancada";
+      }
+      if (average >= 12) {
+        return "Build estavel";
+      }
+      return "Build inicial";
+    }
+
+    function renderAttributes() {
+      const attributeKeys = Object.keys(state.player.attributes);
+      const values = attributeKeys.map(function(key) {
+        return state.player.attributes[key];
+      });
+      const maxValue = Math.max.apply(null, values.concat([10]));
+      const totalPoints = values.reduce(function(sum, current) {
+        return sum + current;
+      }, 0);
+      const average = attributeKeys.length ? totalPoints / attributeKeys.length : 0;
+      const strongestKey = attributeKeys.slice().sort(function(a, b) {
+        return state.player.attributes[b] - state.player.attributes[a];
+      })[0];
+
+      elements.attributeSummary.innerHTML = [
+        createAttributeSummaryCard("Poder total", String(totalPoints) + " pts"),
+        createAttributeSummaryCard("Media por atributo", average.toFixed(1) + " pts"),
+        createAttributeSummaryCard("Classe atual", getAttributePowerRank(average))
+      ].join("");
+
+      elements.attributeGrid.innerHTML = attributeKeys.map(function(key) {
+        const value = state.player.attributes[key];
+        const width = Math.max(10, Math.min(100, Math.round((value / maxValue) * 100)));
+        const nextMilestone = getAttributeNextMilestone(value);
+        const remaining = nextMilestone ? nextMilestone - value : 0;
+        const tier = getAttributeTier(value);
+        return (
+          '<div class="attribute-box">' +
+            '<div class="attribute-top">' +
+              '<div>' +
+                '<div class="attribute-label">' + escapeHtml(toLabel(key)) + '</div>' +
+                '<div class="attribute-tier">' + escapeHtml(tier) + '</div>' +
+              '</div>' +
+              '<div class="attribute-points">' +
+                '<strong>' + value + '</strong>' +
+                '<span class="attribute-label">pontos</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="attribute-bar">' +
+              '<div class="progress-bar"><div class="progress-fill" style="width:' + width + '%"></div></div>' +
+            '</div>' +
+            '<div class="attribute-meta">' +
+              '<span>' + (key === strongestKey ? "Atributo dominante" : "Em desenvolvimento") + '</span>' +
+              '<span>' + (nextMilestone ? ("faltam " + remaining + " para " + nextMilestone) : "topo atual alcancado") + '</span>' +
+            '</div>' +
+            '<div class="attribute-label">Escala atual: ' + value + ' / ' + maxValue + '</div>' +
+          '</div>'
+        );
+      }).join("");
+    }
+
+    function renderMissions() {
+      if (state.missions.length === 0) {
+        elements.missionList.innerHTML = '<div class="empty-state">Nenhuma missao ativa. Crie uma nova para continuar evoluindo.</div>';
+        return;
+      }
+
+      elements.missionList.innerHTML = state.missions.map(function(mission) {
+        const difficultyClass = mission.difficulty === "Facil" ? "easy" : mission.difficulty === "Media" ? "medium" : "hard";
+        return (
+          '<div class="mission-item">' +
+            "<div>" +
+              '<div class="mission-name">' + escapeHtml(mission.name) + "</div>" +
+              '<div class="mission-tags">' +
+                '<span class="tag ' + difficultyClass + '">' + escapeHtml(getDifficultyLabel(mission.difficulty)) + "</span>" +
+                '<span class="tag">' + escapeHtml(mission.skill) + "</span>" +
+              "</div>" +
+            "</div>" +
+            '<button type="button" class="secondary" data-complete-id="' + mission.id + '">Completar</button>' +
+          "</div>"
+        );
+      }).join("");
+
+      Array.prototype.forEach.call(elements.missionList.querySelectorAll("[data-complete-id]"), function(button) {
+        button.addEventListener("click", function() {
+          completeMission(button.getAttribute("data-complete-id"));
+        });
+      });
+    }
+
+    function renderSkills() {
+      elements.skillsGrid.innerHTML = state.skills.map(function(skill) {
+        const maxXp = getSkillMaxXp(skill.level);
+        const progress = (skill.xp / maxXp) * 100;
+        return (
+          '<div class="skill-card">' +
+            '<div class="skill-top">' +
+              "<div>" +
+                '<p class="skill-name">' + escapeHtml(skill.name) + "</p>" +
+                '<div class="skill-meta">XP da habilidade: ' + skill.xp + " / " + maxXp + "</div>" +
+              "</div>" +
+              '<div class="rank-pill">' + escapeHtml(getRankByLevel(skill.level)) + "</div>" +
+            "</div>" +
+            '<div class="skill-level">Level ' + skill.level + "</div>" +
+            '<div class="progress-shell"><div class="progress-bar"><div class="progress-fill" style="width:' + Math.min(progress, 100) + '%"></div></div></div>' +
+          "</div>"
+        );
+      }).join("");
+    }
+
+    function renderTitles() {
+      elements.titleList.innerHTML = titleRules.map(function(title) {
+        const unlocked = state.unlockedTitles.includes(title.id);
+        return (
+          '<div class="title-item ' + (unlocked ? "" : "locked") + '">' +
+            '<div class="title-head">' +
+              '<div class="title-name">' + escapeHtml(title.name) + "</div>" +
+              '<div class="lock-pill ' + (unlocked ? "" : "locked") + '">' + (unlocked ? "Desbloqueado" : "Bloqueado") + "</div>" +
+            "</div>" +
+            '<div class="title-meta">' + escapeHtml(title.description) + "</div>" +
+          "</div>"
+        );
+      }).join("");
+    }
+
+    function notify(title, message) {
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.innerHTML = "<strong>" + escapeHtml(title) + "</strong><span>" + escapeHtml(message) + "</span>";
+      elements.notificationStack.appendChild(toast);
+
+      window.setTimeout(function() {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-8px)";
+      }, 2800);
+
+      window.setTimeout(function() {
+        toast.remove();
+      }, 3400);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+  </script>
+</body>
+</html>
